@@ -7,12 +7,32 @@ const productSchema = z.object({
     price: z.string(),
     description: z.string(),
     weight: z.string(),
+    promotion_id: z.number().optional(),
 })
 
 exports.GetProducts = catchError(
     async (req, res) => {
-        const data = await prisma.product.findMany()
-        res.status(200).json(data)
+        const data = await prisma.product.findMany({
+            include: {
+                promotion: {
+                    select: {
+                        title: true,
+                        start_date: true,
+                        end_date: true,
+                        discount_amount: true,
+                        discount_type: true,
+                        is_enabled: true,
+                    }
+                }
+            }
+        })
+
+        const filteredData = data.map((product) => ({
+            ...product,
+            promotion: product?.promotion?.is_enabled ? product?.promotion : null,
+        }));
+
+        res.status(200).json(filteredData)
     }
 )
 
@@ -22,6 +42,7 @@ exports.CreateProduct = catchError(
         const product = productSchema.parse({
             ...req.body,
         })
+
 
         // create product
         await prisma.product.create({
