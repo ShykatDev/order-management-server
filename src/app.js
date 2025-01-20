@@ -4,6 +4,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.route");
 const commonRoutes = require("./routes/common.route");
+const productRoutes = require("./routes/products.route");
 const config = require('./constants/config');
 
 const app = express();
@@ -22,6 +23,7 @@ app.get('/health-check', catchError((req, res) => {
 // Auth Routes
 app.use(`${config.apiVersion}/auth`, authRoutes);
 app.use(`${config.apiVersion}/me`, commonRoutes);
+app.use(`${config.apiVersion}/products`, productRoutes);
 
 app.use(errorHandler);
 
