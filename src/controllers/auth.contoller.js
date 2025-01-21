@@ -8,6 +8,7 @@ const registerSchema = z.object({
     name: z.string(),
     email: z.string().email().min(6).max(255),
     password: z.string().min(6).max(255),
+    role: z.string().optional(),
 })
 
 exports.Register = catchError(
@@ -69,10 +70,10 @@ exports.GetAccount = catchError(
         }
 
         const data = {
-            message: "Account retrieved successfully",
             user: {
                 name: user.name,
                 email: user.email,
+                role: user.role
             },
         };
 

@@ -12,7 +12,7 @@ model User {
   name       String
   email      String   @unique
   password   String
-  role       String
+  role       String   @default("user")
   cart       Cart?    @relation("UserCart")
   created_at DateTime @default(now())
 }
@@ -64,13 +64,13 @@ model Orders {
 }
 
 model WeightSlab {
-  id                Int           @id @default(autoincrement())
+  id                Int            @id @default(autoincrement())
   min               Decimal
   max               Decimal
   amount            Decimal
-  promotion_type_id Int
-  promotion_type    PromotionType @relation(fields: [promotion_type_id], references: [id], onDelete: Cascade)
-  created_at        DateTime      @default(now())
+  promotion_type_id Int?
+  promotion_type    PromotionType? @relation(fields: [promotion_type_id], references: [id], onDelete: Cascade)
+  created_at        DateTime       @default(now())
   Orders            Orders[]
 }
 

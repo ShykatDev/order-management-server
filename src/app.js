@@ -6,6 +6,8 @@ const authRoutes = require("./routes/auth.route");
 const commonRoutes = require("./routes/common.route");
 const productRoutes = require("./routes/products.route");
 const promotionRoutes = require("./routes/promotions.route");
+const slabRoutes = require("./routes/slabs.route");
+const promoTypeRoutes = require("./routes/promoTypes.route");
 const config = require('./constants/config');
 
 const app = express();
@@ -26,6 +28,8 @@ app.use(`${config.apiVersion}/auth`, authRoutes);
 app.use(`${config.apiVersion}/me`, commonRoutes);
 app.use(`${config.apiVersion}/products`, productRoutes);
 app.use(`${config.apiVersion}/promotions`, promotionRoutes);
+app.use(`${config.apiVersion}/slabs`, slabRoutes);
+app.use(`${config.apiVersion}/promo-types`, promoTypeRoutes);
 
 app.use(errorHandler);
 

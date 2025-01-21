@@ -12,20 +12,7 @@ const productSchema = z.object({
 
 exports.GetProducts = catchError(
     async (req, res) => {
-        const data = await prisma.product.findMany({
-            include: {
-                promotion: {
-                    select: {
-                        title: true,
-                        start_date: true,
-                        end_date: true,
-                        discount_amount: true,
-                        discount_type: true,
-                        is_enabled: true,
-                    }
-                }
-            }
-        })
+        const data = await prisma.product.findMany()
 
         const filteredData = data.map((product) => ({
             ...product,
@@ -42,7 +29,6 @@ exports.CreateProduct = catchError(
         const product = productSchema.parse({
             ...req.body,
         })
-
 
         // create product
         await prisma.product.create({

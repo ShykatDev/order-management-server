@@ -22,6 +22,7 @@ exports.createAccount = async function (data) {
                name: data.name,
                email: data.email,
                password: hashedPassword,
+               role: data.role
            }
        });
 }
