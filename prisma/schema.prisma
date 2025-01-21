@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,29 +12,71 @@ model User {
   name       String
   email      String   @unique
   password   String
+  role       String
+  cart       Cart?    @relation("UserCart")
   created_at DateTime @default(now())
 }
 
+model Cart {
+  id         Int       @id @default(autoincrement())
+  user_id    Int       @unique
+  user       User      @relation("UserCart", fields: [user_id], references: [id], onDelete: Cascade)
+  products   Product[]
+  quantity   Int
+  created_at DateTime  @default(now())
+}
+
 model Product {
-  id           Int        @id @default(autoincrement())
-  name         String
-  description  String
-  price        String
-  weight       String
-  is_enabled   Boolean    @default(true)
-  promotion    Promotion? @relation(fields: [promotion_id], references: [id], onDelete: Cascade)
-  promotion_id Int?
-  created_at   DateTime   @default(now())
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal
+  weight      Decimal
+  is_enabled  Boolean     @default(true)
+  promotions  Promotion[]
+  created_at  DateTime    @default(now())
+  carts       Cart[]
+  order_id    Int?
+  orders      Orders?     @relation(fields: [order_id], references: [id], onDelete: Cascade)
 }
 
 model Promotion {
-  id              Int       @id @default(autoincrement())
-  title           String
-  start_date      DateTime  @default(now())
-  end_date        DateTime
-  is_enabled      Boolean   @default(true)
-  discount_type   String
-  discount_amount String
-  products        Product[]
-  created_at      DateTime  @default(now())
+  id                Int           @id @default(autoincrement())
+  title             String
+  start_date        DateTime      @default(now())
+  end_date          DateTime
+  is_enabled        Boolean       @default(true)
+  promotion_type_id Int
+  promotion_type    PromotionType @relation(fields: [promotion_type_id], references: [id])
+  discount_amount   Decimal
+  products          Product[]
+  created_at        DateTime      @default(now())
+}
+
+model Orders {
+  id                Int         @id @default(autoincrement())
+  quantity          Int
+  user_id           Int
+  weight_slab       WeightSlab? @relation(fields: [slab_id], references: [id], onDelete: Cascade)
+  slab_id           Int?
+  total_order_price Decimal
+  Product           Product[]
+}
+
+model WeightSlab {
+  id                Int           @id @default(autoincrement())
+  min               Decimal
+  max               Decimal
+  amount            Decimal
+  promotion_type_id Int
+  promotion_type    PromotionType @relation(fields: [promotion_type_id], references: [id], onDelete: Cascade)
+  created_at        DateTime      @default(now())
+  Orders            Orders[]
+}
+
+model PromotionType {
+  id         Int          @id @default(autoincrement())
+  type       String
+  Promotion  Promotion[]
+  WeightSlab WeightSlab[]
 }
