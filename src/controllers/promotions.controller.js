@@ -4,17 +4,21 @@ const prisma = require('../constants/db')
 
 const promotionSchema = z.object({
     title: z.string(),
-    start_date: z.string(),
+    start_date: z.string().optional(),
     end_date: z.string(),
-    is_enabled: z.boolean(),
-    discount_type: z.string(),
-    discount_amount: z.string(),
-    products: z.array(z.number())
+    is_enabled: z.boolean().optional(),
+    discount_amount: z.number(),
+    products: z.array(z.number()),
+    promotion_type_id: z.number(),
 })
 
 exports.GetPromotions = catchError(
     async (req, res) => {
-        const data = await prisma.promotion.findMany()
+        const data = await prisma.promotion.findMany({
+            include: {
+                promotion_type: true
+            }
+        })
         res.status(200).json(data)
     }
 )
@@ -29,15 +33,14 @@ exports.CreatePromotions = catchError(
         // create product
         await prisma.promotion.create({
             data: {
+                ...promotion,
                 title: promotion.title,
-                start_date: new Date(promotion.start_date), // Convert to Date object
-                end_date: new Date(promotion.end_date),     // Convert to Date object
-                is_enabled: promotion.is_enabled,
-                discount_type: promotion.discount_type,
+                end_date: new Date(promotion.end_date),
                 discount_amount: promotion.discount_amount,
                 products: {
                     connect: promotion.products.map((productId) => ({ id: productId })), // Use 'connect' for existing products
                 },
+                promotion_type_id: promotion.promotion_type_id
             },
         })
 

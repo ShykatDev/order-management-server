@@ -18,26 +18,37 @@ model User {
 }
 
 model Cart {
-  id         Int       @id @default(autoincrement())
-  user_id    Int       @unique
-  user       User      @relation("UserCart", fields: [user_id], references: [id], onDelete: Cascade)
-  products   Product[]
-  quantity   Int
-  created_at DateTime  @default(now())
+  id         Int           @id @default(autoincrement())
+  user_id    Int           @unique
+  user       User          @relation("UserCart", fields: [user_id], references: [id], onDelete: Cascade)
+  products   CartProduct[]
+  created_at DateTime      @default(now())
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
   description String
   price       Decimal
   weight      Decimal
-  is_enabled  Boolean     @default(true)
+  is_enabled  Boolean       @default(true)
   promotions  Promotion[]
-  created_at  DateTime    @default(now())
-  carts       Cart[]
+  created_at  DateTime      @default(now())
+  carts       CartProduct[]
   order_id    Int?
-  orders      Orders?     @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  orders      Orders?       @relation(fields: [order_id], references: [id], onDelete: Cascade)
+}
+
+model CartProduct {
+  id         Int      @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  quantity   Int
+  cart       Cart     @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@unique([cart_id, product_id])
 }
 
 model Promotion {

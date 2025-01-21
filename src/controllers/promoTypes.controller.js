@@ -14,6 +14,7 @@ exports.GetPromoTypes = catchError(
 exports.CreatePromoTypes = catchError(
     async (req, res) => {
         // create product
+        console.log(req.body)
         await prisma.promotionType.create({
             data: {
                 ...req.body,

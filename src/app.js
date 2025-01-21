@@ -8,6 +8,7 @@ const productRoutes = require("./routes/products.route");
 const promotionRoutes = require("./routes/promotions.route");
 const slabRoutes = require("./routes/slabs.route");
 const promoTypeRoutes = require("./routes/promoTypes.route");
+const cartRoutes = require("./routes/cart.routes");
 const config = require('./constants/config');
 
 const app = express();
@@ -30,6 +31,7 @@ app.use(`${config.apiVersion}/products`, productRoutes);
 app.use(`${config.apiVersion}/promotions`, promotionRoutes);
 app.use(`${config.apiVersion}/slabs`, slabRoutes);
 app.use(`${config.apiVersion}/promo-types`, promoTypeRoutes);
+app.use(`${config.apiVersion}/cart`, cartRoutes);
 
 app.use(errorHandler);
 

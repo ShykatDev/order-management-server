@@ -1,5 +1,4 @@
 const catchError = require('../utils/catchErrors')
-const {z} = require("zod");
 const prisma = require('../constants/db')
 
 exports.GetSlabs = catchError(
@@ -34,7 +33,7 @@ exports.CreateSlabs = catchError(
             }
         })
 
-        res.status(200).json({
+        res.status(201).json({
             status: "Slab Create",
         })
     }

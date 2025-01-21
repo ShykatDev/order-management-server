@@ -7,19 +7,23 @@ const productSchema = z.object({
     price: z.string(),
     description: z.string(),
     weight: z.string(),
-    promotion_id: z.number().optional(),
 })
 
 exports.GetProducts = catchError(
     async (req, res) => {
-        const data = await prisma.product.findMany()
-
-        const filteredData = data.map((product) => ({
-            ...product,
-            promotion: product?.promotion?.is_enabled ? product?.promotion : null,
-        }));
-
-        res.status(200).json(filteredData)
+        const data = await prisma.product.findMany({
+            include: {
+                promotions: {
+                    where: {
+                        is_enabled: true
+                    },
+                    include: {
+                        promotion_type: true, // Include promotion_type inside promotions
+                    },
+                },
+            },
+        });
+        res.status(200).json(data)
     }
 )
 
