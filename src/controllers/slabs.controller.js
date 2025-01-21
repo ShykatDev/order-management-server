@@ -3,7 +3,11 @@ const prisma = require('../constants/db')
 
 exports.GetSlabs = catchError(
     async (req, res) => {
-        const slabs = await prisma.weightSlab.findMany()
+        const slabs = await prisma.weightSlab.findMany({
+            include: {
+                promotion_type: true
+            }
+        })
         return res.status(200).json({
             data: slabs,
         })
@@ -26,10 +30,31 @@ exports.CreateSlabs = catchError(
             })
         }
 
+        const weightPromoType = await prisma.promotionType.findUnique({
+            where: {
+                type: "weighted"
+            }
+        })
+
+        const payload = weightPromoType ? {
+                ...req.body,
+                promotion_type_id: weightPromoType?.id
+            } : {...req.body}
+
+        if(weightPromoType) {
+            await prisma.weightSlab.updateMany({
+                where: {
+                    promotion_type_id: null
+                },
+                data: {
+                    promotion_type_id: weightPromoType?.id
+                }
+            })
+        }
         // create product
         await prisma.weightSlab.create({
             data: {
-                ...req.body,
+                ...payload,
             }
         })
 
