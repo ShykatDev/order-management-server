@@ -6,7 +6,6 @@ const productRoutes = express.Router();
 
 productRoutes.use(authMiddleware)
 
-productRoutes.get("/", ProductController.GetProducts)
 productRoutes.post("/", ProductController.CreateProduct)
 productRoutes.patch("/:id", ProductController.EditProduct)
 productRoutes.delete("/:id", ProductController.DeleteProduct)

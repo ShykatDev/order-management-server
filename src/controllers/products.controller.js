@@ -13,6 +13,8 @@ exports.GetProducts = catchError(
     async (req, res) => {
         const data = await prisma.product.findMany({
             include: {
+                orders: true,
+                carts: true,
                 promotions: {
                     where: {
                         is_enabled: true

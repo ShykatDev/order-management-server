@@ -3,7 +3,11 @@ const prisma = require('../constants/db')
 
 exports.GetCarts = catchError(
     async (req, res) => {
-        const cart = await prisma.cart.findMany()
+        const cart = await prisma.cart.findMany({
+            include: {
+                products: true
+            }
+        })
         return res.status(200).json({
             data: cart,
         })

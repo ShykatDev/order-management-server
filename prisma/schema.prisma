@@ -13,30 +13,30 @@ model User {
   email      String   @unique
   password   String
   role       String   @default("user")
-  cart       Cart?    @relation("UserCart")
+  cart       Cart?
   created_at DateTime @default(now())
+  Orders     Orders[]
 }
 
 model Cart {
   id         Int           @id @default(autoincrement())
+  user       User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    Int           @unique
-  user       User          @relation("UserCart", fields: [user_id], references: [id], onDelete: Cascade)
   products   CartProduct[]
   created_at DateTime      @default(now())
 }
 
 model Product {
-  id          Int           @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
   description String
   price       Decimal
   weight      Decimal
-  is_enabled  Boolean       @default(true)
+  is_enabled  Boolean        @default(true)
   promotions  Promotion[]
-  created_at  DateTime      @default(now())
+  created_at  DateTime       @default(now())
   carts       CartProduct[]
-  order_id    Int?
-  orders      Orders?       @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  orders      OrderProduct[]
 }
 
 model CartProduct {
@@ -65,13 +65,27 @@ model Promotion {
 }
 
 model Orders {
-  id                Int         @id @default(autoincrement())
-  quantity          Int
+  id                Int            @id @default(autoincrement())
+  quantity          Decimal
   user_id           Int
-  weight_slab       WeightSlab? @relation(fields: [slab_id], references: [id], onDelete: Cascade)
+  user              User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  weight_slab       WeightSlab?    @relation(fields: [slab_id], references: [id], onDelete: Cascade)
   slab_id           Int?
   total_order_price Decimal
-  Product           Product[]
+  weight            Decimal
+  products          OrderProduct[]
+}
+
+model OrderProduct {
+  id         Int      @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  quantity   Int
+  order      Orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@unique([order_id, product_id])
 }
 
 model WeightSlab {

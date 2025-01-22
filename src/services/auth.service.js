@@ -44,13 +44,13 @@ exports.loginAccount = async function(data) {
     }
 
     const accessToken = jwt.sign(
-        {userEmail: `${user.email}`},
+        {userEmail: user?.email, role: user?.role},
         config.accessToken,
         {expiresIn: "1d"}
     );
 
     const refreshToken = jwt.sign(
-        {userEmail: `${user.email}`},
+        {userEmail: user?.email, role: user?.role},
         config.refreshToken,
         {expiresIn: "7d"}
     );
